@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Md. Faridurjaman Ovi | Portfolio & Bio Links</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons via CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Hind Siliguri & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Hind Siliguri"', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    .fade-in {
+      animation: fadeIn 0.25s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased pb-20">
+
+  <!-- Toast Notification Banner -->
+  <div id="toast" class="fixed top-5 right-5 z-[100] hidden items-center gap-2.5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-emerald-500/40 text-sm font-medium transition-all">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+    <span id="toast-message">সফলভাবে সেভ হয়েছে!</span>
+  </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div id="confirm-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+      <h3 class="font-bold text-lg text-slate-900">নিশ্চিত করুন</h3>
+      <p id="confirm-text" class="text-sm text-slate-600">আপনি কি নিশ্চিতভাবে এটি ডিলিট করতে চান?</p>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="closeConfirm(false)" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition">বাতিল</button>
+        <button type="button" onclick="closeConfirm(true)" class="px-4 py-2 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 transition">ডিলিট করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top & Bottom Route Switcher Bar -->
+  <div class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 backdrop-blur-md text-white px-2.5 py-2 rounded-full shadow-2xl border border-white/15 flex items-center gap-1 sm:gap-2 max-w-[96vw]">
+    <span class="text-[11px] text-slate-400 pl-2 hidden md:inline font-mono">ovi.pages.dev</span>
+    <button type="button" onclick="navigate('portfolio')" id="nav-btn-portfolio" class="px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 bg-emerald-600 text-white">
+      <i data-lucide="home" class="w-3.5 h-3.5"></i> পোর্টফোলিও (/)
+    </button>
+    <button type="button" onclick="navigate('bio', currentBioUsername)" id="nav-btn-bio" class="px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 hover:bg-white/10 text-slate-200">
+      <i data-lucide="link-2" class="w-3.5 h-3.5"></i> বায়ো (/<span id="nav-bio-label">ovi</span>)
+    </button>
+    <button type="button" onclick="navigate('admin')" id="nav-btn-admin" class="px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 hover:bg-white/10 text-slate-200">
+      <i data-lucide="settings" class="w-3.5 h-3.5"></i> অ্যাডমিন (/admin)
+    </button>
+  </div>
+
+  <!-- Main View Container -->
+  <div id="app"></div>
+
+  <script>
+    // Social Media Platform Definitions with Brand Colors & SVG Logos
+    const SOCIAL_PLATFORMS = [
+      {
+        id: 'facebook',
+        name: 'Facebook',
+        badgeBg: 'bg-[#1877F2]',
+        hoverBorder: 'hover:border-[#1877F2]/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>`
+      },
+      {
+        id: 'youtube',
+        name: 'YouTube',
+        badgeBg: 'bg-[#FF0000]',
+        hoverBorder: 'hover:border-[#FF0000]/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`
+      },
+      {
+        id: 'instagram',
+        name: 'Instagram',
+        badgeBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
+        hoverBorder: 'hover:border-[#DD2A7B]/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.8A3.95 3.95 0 0 0 3.8 7.75v8.5a3.95 3.95 0 0 0 3.95 3.95h8.5a3.95 3.95 0 0 0 3.95-3.95v-8.5a3.95 3.95 0 0 0-3.95-3.95h-8.5zm8.95 1.35a1.15 1.15 0 1 1 0 2.3 1.15 1.15 0 0 1 0-2.3zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4z"/></svg>`
+      },
+      {
+        id: 'tiktok',
+        name: 'TikTok',
+        badgeBg: 'bg-black border border-white/25',
+        hoverBorder: 'hover:border-[#25F4EE]/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>`
+      },
+      {
+        id: 'whatsapp',
+        name: 'WhatsApp',
+        badgeBg: 'bg-[#25D366]',
+        hoverBorder: 'hover:border-[#25D366]/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M20.52 3.48A11.82 11.82 0 0 0 12.07 0C5.5 0 .16 5.34.16 11.91c0 2.1.55 4.15 1.59 5.96L0 24l6.3-1.65a11.86 11.86 0 0 0 5.77 1.47h.01c6.57 0 11.91-5.34 11.91-11.91 0-3.18-1.24-6.17-3.47-8.43zm-8.45 18.33h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.84 9.84 0 0 1-1.51-5.23c0-5.45 4.44-9.89 9.9-9.89 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.89-9.89 9.89zm5.43-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.88 1.21 3.08.15.2 2.09 3.19 5.06 4.47.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/></svg>`
+      },
+      {
+        id: 'telegram',
+        name: 'Telegram',
+        badgeBg: 'bg-[#26A5E4]',
+        hoverBorder: 'hover:border-[#26A5E4]/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>`
+      },
+      {
+        id: 'messenger',
+        name: 'Messenger',
+        badgeBg: 'bg-gradient-to-tr from-[#006AFF] via-[#00B2FF] to-[#A033FF]',
+        hoverBorder: 'hover:border-[#0084FF]/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M12 0C5.275 0 0 4.913 0 11.55c0 3.467 1.422 6.462 3.738 8.515.195.172.312.416.32.676l.064 2.11c.02.673.72 1.11 1.326.835l2.354-1.04c.24-.106.512-.126.766-.056 1.185.327 2.448.504 3.632.504 6.725 0 12-4.913 12-11.55S18.725 0 12 0zm1.21 15.563l-3.053-3.257-5.96 3.257 6.555-6.958 3.128 3.257 5.885-3.257-6.555 6.958z"/></svg>`
+      },
+      {
+        id: 'linkedin',
+        name: 'LinkedIn',
+        badgeBg: 'bg-[#0A66C2]',
+        hoverBorder: 'hover:border-[#0A66C2]/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`
+      },
+      {
+        id: 'github',
+        name: 'GitHub',
+        badgeBg: 'bg-[#24292F] border border-white/25',
+        hoverBorder: 'hover:border-white/50',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>`
+      },
+      {
+        id: 'x',
+        name: 'X (Twitter)',
+        badgeBg: 'bg-black border border-white/25',
+        hoverBorder: 'hover:border-white/50',
+        svg: `<svg viewBox="0 0 24 24" class="w-4 h-4 fill-white" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`
+      },
+      {
+        id: 'website',
+        name: 'Website',
+        badgeBg: 'bg-emerald-600',
+        hoverBorder: 'hover:border-emerald-400/60',
+        svg: `<svg viewBox="0 0 24 24" class="w-5 h-5 fill-white" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`
+      }
+    ];
+
+    function getPlatformMeta(platformId = '', url = '') {
+      const pid = (platformId || '').toLowerCase();
+      if (pid && pid !== 'auto') {
+        const match = SOCIAL_PLATFORMS.find(p => p.id === pid);
+        if (match) return match;
+      }
+      const u = (url || '').toLowerCase();
+      if (u.includes('facebook.com') || u.includes('fb.com')) return SOCIAL_PLATFORMS.find(p => p.id === 'facebook');
+      if (u.includes('youtube.com') || u.includes('youtu.be')) return SOCIAL_PLATFORMS.find(p => p.id === 'youtube');
+      if (u.includes('instagram.com')) return SOCIAL_PLATFORMS.find(p => p.id === 'instagram');
+      if (u.includes('tiktok.com')) return SOCIAL_PLATFORMS.find(p => p.id === 'tiktok');
+      if (u.includes('whatsapp.com') || u.includes('wa.me')) return SOCIAL_PLATFORMS.find(p => p.id === 'whatsapp');
+      if (u.includes('t.me') || u.includes('telegram.')) return SOCIAL_PLATFORMS.find(p => p.id === 'telegram');
+      if (u.includes('m.me') || u.includes('messenger.com')) return SOCIAL_PLATFORMS.find(p => p.id === 'messenger');
+      if (u.includes('linkedin.com')) return SOCIAL_PLATFORMS.find(p => p.id === 'linkedin');
+      if (u.includes('github.com')) return SOCIAL_PLATFORMS.find(p => p.id === 'github');
+      if (u.includes('x.com') || u.includes('twitter.com')) return SOCIAL_PLATFORMS.find(p => p.id === 'x');
+      return SOCIAL_PLATFORMS.find(p => p.id === 'website');
+    }
+
+    function isVideoSource(url = '') {
+      if (!url) return false;
+      return url.startsWith('data:video/') || /\.(mp4|webm|mov|m4v|ogg)(\?.*)?$/i.test(url);
+    }
+
+    // Default Initial Application Data
+    const DEFAULT_DATA = {
+      portfolio: {
+        full_name: 'Md. Faridurjaman Ovi',
+        tagline: 'Lecturer in ICT | Full-Stack Web Developer | Digital Creator',
+        bio: 'তথ্য ও যোগাযোগ প্রযুক্তি বিষয়ের প্রভাষক, ফুল-স্ট্যাক ওয়েব ডেভেলপার এবং গ্রামীণ ঐতিহ্য ও জীবনযাত্রা বিষয়ক ডিজিটাল কন্টেন্ট নির্মাতা। প্রযুক্তির মাধ্যমে শিক্ষা, স্থানীয় উদ্যোক্তা ও সৃজনশীলতাকে সামনে এগিয়ে নিতে কাজ করছি।',
+        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+        email: 'faridurjaman.ovi@example.com',
+        phone: '01922101111',
+        present_address: 'Keshabpur, Jashore',
+        permanent_address: 'Krishnagar, Shailkupa, Jhenaidah',
+        skills: [
+          'ICT Education & Mentoring',
+          'React & Vite',
+          'Laravel & PHP',
+          'Supabase & PostgreSQL',
+          'Cloudflare Pages & CDN',
+          'Cloudinary Media Workflow',
+          'Mobile Photography',
+          'Video Content Creation'
+        ],
+        education: [
+          { degree: 'M.Sc. in Information & Communication Engineering', institution: 'Islamic University, Kushtia', year: '2016-17', result: 'CGPA 3.08' },
+          { degree: 'B.Sc. (Hons) in Information & Communication Engineering', institution: 'Islamic University, Kushtia', year: '2012-13', result: 'CGPA 3.11' },
+          { degree: 'HSC (Science)', institution: 'Mia Jinnah Alam Degree College', year: '2012', result: 'GPA 4.50' },
+          { degree: 'SSC (Science)', institution: 'Achintapur Secondary School', year: '2010', result: 'GPA 5.00' }
+        ],
+        experiences: [
+          { role: 'Lecturer in ICT', org: 'Komarpol Islamia Sabania Fazil Madrasah, Keshabpur, Jashore', period: 'Feb 2026 - Present' },
+          { role: 'Assistant Teacher (ICT)', org: 'Rajab Ali Secondary School, Jhenaidah', period: 'Sep 2025 - Mar 2026' },
+          { role: 'Assistant Teacher (ICT)', org: 'Jhenaidah Collectorate School & College', period: 'Nov 2022 - Aug 2025' }
+        ],
+        projects: [
+          {
+            title: 'Kather Ponno (কাঠের পণ্য)',
+            desc: 'যশোরের ঐতিহ্যবাহী মেহগনি কাঠের তৈরি নিরাপদ শিশুদের খেলনা, গৃহস্থালি সামগ্রী ও হস্তশিল্পের ই-কমার্স উদ্যোগ।',
+            link: 'https://katherponno.com',
+            media_url: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=700&q=80'
+          },
+          {
+            title: 'Dorpon Media & Bong Belly',
+            desc: 'বাংলার গ্রামীণ প্রকৃতি, লোকজ ঐতিহ্য, সংস্কৃতি এবং ঘরোয়া রান্নার গল্প নিয়ে নির্মিত ডিজিটাল ভিডিও ও মিডিয়া প্ল্যাটফর্ম।',
+            link: 'https://youtube.com',
+            media_url: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=700&q=80'
+          }
+        ]
+      },
+      bioPages: [
+        {
+          id: 'bio-ovi',
+          username: 'ovi',
+          display_name: 'Md. Faridurjaman Ovi',
+          bio_text: 'Lecturer in ICT | Full-Stack Web Developer | Digital Content Creator',
+          avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+          theme_color: '#064e3b',
+          links: [
+            { id: 'l1', title: 'আমার পোর্টফোলিও ওয়েবসাইট', url: '#portfolio', platform: 'website' },
+            { id: 'l2', title: 'Facebook Profile', url: 'https://facebook.com', platform: 'facebook' },
+            { id: 'l3', title: 'YouTube — Dorpon Media', url: 'https://youtube.com', platform: 'youtube' },
+            { id: 'l4', title: 'Instagram', url: 'https://instagram.com', platform: 'instagram' },
+            { id: 'l5', title: 'TikTok — Bong Belly', url: 'https://tiktok.com', platform: 'tiktok' },
+            { id: 'l6', title: 'WhatsApp Direct', url: 'https://wa.me/8801922101111', platform: 'whatsapp' },
+            { id: 'l7', title: 'GitHub Projects', url: 'https://github.com', platform: 'github' },
+            { id: 'l8', title: 'LinkedIn', url: 'https://linkedin.com', platform: 'linkedin' }
+          ]
+        },
+        {
+          id: 'bio-katherponno',
+          username: 'katherponno',
+          display_name: 'কাঠের পণ্য (Kather Ponno)',
+          bio_text: 'যশোরের মেহগনি কাঠের তৈরি নিরাপদ খেলনা ও হস্তশিল্পের বিশ্বস্ত ঠিকানা।',
+          avatar_url: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&q=80',
+          theme_color: '#451a03',
+          links: [
+            { id: 'kl1', title: 'Kather Ponno Website', url: 'https://katherponno.com', platform: 'website' },
+            { id: 'kl2', title: 'Facebook Page', url: 'https://facebook.com', platform: 'facebook' },
+            { id: 'kl3', title: 'WhatsApp Order', url: 'https://wa.me/8801922101111', platform: 'whatsapp' },
+            { id: 'kl4', title: 'Messenger Chat', url: 'https://m.me', platform: 'messenger' }
+          ]
+        }
+      ]
+    };
+
+    let state = loadSavedState();
+    let currentView = 'portfolio';
+    let currentBioUsername = state.bioPages[0]?.username || 'ovi';
+    let adminTab = 'portfolio';
+    let selectedAdminBioId = state.bioPages[0]?.id || '';
+    let editingLinkId = null;
+    let confirmCallback = null;
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem('ovi_portfolio_live_preview_v2');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.portfolio && Array.isArray(parsed.bioPages)) {
+            return parsed;
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load saved state:', err);
+      }
+      return JSON.parse(JSON.stringify(DEFAULT_DATA));
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('ovi_portfolio_live_preview_v2', JSON.stringify(state));
+      } catch (err) {
+        // Fallback if a large video data URL exceeds localStorage quota
+        showToast('মিডিয়া প্রিভিউ সেশনে সক্রিয় (বড় ফাইলের ক্ষেত্রে ক্লাউড URL ব্যবহার করুন)।');
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      lucide.createIcons();
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2800);
+    }
+
+    function openConfirm(text, onYes) {
+      document.getElementById('confirm-text').textContent = text;
+      confirmCallback = onYes;
+      const modal = document.getElementById('confirm-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeConfirm(confirmed) {
+      const modal = document.getElementById('confirm-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      if (confirmed && typeof confirmCallback === 'function') {
+        confirmCallback();
+      }
+      confirmCallback = null;
+    }
+
+    // Hash route synchronization (#/, #/admin, #/ovi, #/katherponno)
+    function parseHashRoute() {
+      const hash = window.location.hash || '#/';
+      const clean = hash.replace(/^#\/?/, '').trim();
+      if (!clean || clean === 'portfolio') {
+        currentView = 'portfolio';
+      } else if (clean === 'admin') {
+        currentView = 'admin';
+      } else {
+        currentView = 'bio';
+        currentBioUsername = clean;
+      }
+      const bioLabel = document.getElementById('nav-bio-label');
+      if (bioLabel) bioLabel.textContent = currentBioUsername;
+      updateNavButtons();
+    }
+
+    function navigate(view, username = null) {
+      currentView = view;
+      if (username) {
+        currentBioUsername = username;
+      }
+      if (view === 'portfolio') {
+        window.location.hash = '#/';
+      } else if (view === 'admin') {
+        window.location.hash = '#/admin';
+      } else {
+        window.location.hash = `#/${currentBioUsername}`;
+      }
+      const bioLabel = document.getElementById('nav-bio-label');
+      if (bioLabel) bioLabel.textContent = currentBioUsername;
+      updateNavButtons();
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateNavButtons() {
+      const views = ['portfolio', 'bio', 'admin'];
+      views.forEach(v => {
+        const btn = document.getElementById(`nav-btn-${v}`);
+        if (!btn) return;
+        if (v === currentView) {
+          btn.className = 'px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 bg-emerald-600 text-white shadow';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 hover:bg-white/10 text-slate-200';
+        }
+      });
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderMediaElement(url, altText, className, isVideoControls = false) {
+      const fallbackAvatar = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(altText || 'Ovi') + '&size=256&background=10b981&color=fff';
+      if (isVideoSource(url)) {
+        return `<video src="${escapeHtml(url)}" ${isVideoControls ? 'controls playsInline' : 'autoplay loop muted playsInline'} class="${className}"></video>`;
+      }
+      return `<img src="${escapeHtml(url || fallbackAvatar)}" onerror="this.src='${fallbackAvatar}'" alt="${escapeHtml(altText || '')}" class="${className}" />`;
+    }
+
+    // ==================== 1. PORTFOLIO HOMEPAGE ====================
+    function renderPortfolio() {
+      const d = state.portfolio;
+      const defaultBioUser = state.bioPages[0]?.username || 'ovi';
+
+      return `
+        <div class="fade-in">
+          <!-- Sticky Navbar -->
+          <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+            <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center gap-2">
+              <span class="font-bold text-base sm:text-lg text-slate-900 tracking-tight truncate">${escapeHtml(d.full_name)}</span>
+              <div class="flex items-center gap-3 sm:gap-5 text-xs sm:text-sm font-medium shrink-0">
+                <a href="#about" class="hover:text-emerald-600 transition hidden md:inline">পরিচিতি</a>
+                <a href="#education" class="hover:text-emerald-600 transition hidden sm:inline">পড়াশোনা</a>
+                <a href="#experience" class="hover:text-emerald-600 transition hidden sm:inline">অভিজ্ঞতা</a>
+                <a href="#projects" class="hover:text-emerald-600 transition hidden md:inline">প্রজেক্ট</a>
+                <button type="button" onclick="navigate('bio', '${escapeHtml(defaultBioUser)}')" class="px-3.5 py-1.5 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition shadow-sm flex items-center gap-1.5">
+                  <i data-lucide="share-2" class="w-3.5 h-3.5"></i> সোশ্যাল লিংক
+                </button>
+                <button type="button" onclick="navigate('admin')" class="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-full transition" title="অ্যাডমিন প্যানেল">
+                  <i data-lucide="settings" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </nav>
+
+          <!-- Hero Section -->
+          <header id="about" class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white py-14 md:py-22 px-4">
+            <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+              <div class="relative shrink-0">
+                ${renderMediaElement(d.avatar_url, d.full_name, 'w-36 h-36 md:w-44 md:h-44 rounded-full object-cover border-4 border-emerald-500/40 shadow-2xl', false)}
+                <button type="button" onclick="navigate('admin')" class="absolute bottom-1 right-1 bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-full shadow-lg transition" title="ছবি ও তথ্য এডিট করুন">
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+              <div class="space-y-4 flex-1">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-medium border border-emerald-500/30">
+                  <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> পোর্টফোলিও ও ক্রিয়েটিভ প্রোফাইল
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold tracking-tight">${escapeHtml(d.full_name)}</h1>
+                <p class="text-emerald-400 font-medium text-base md:text-lg">${escapeHtml(d.tagline)}</p>
+                <p class="text-slate-300 leading-relaxed max-w-2xl text-sm md:text-base">${escapeHtml(d.bio)}</p>
+
+                <!-- Present & Permanent Address + Contact -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3 text-xs sm:text-sm text-slate-300">
+                  ${d.present_address ? `
+                    <div class="flex items-center justify-center md:justify-start gap-2 bg-white/5 px-3.5 py-2.5 rounded-xl border border-white/10">
+                      <i data-lucide="map-pin" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                      <span><strong class="text-white">বর্তমান ঠিকানা:</strong> ${escapeHtml(d.present_address)}</span>
+                    </div>` : ''}
+                  ${d.permanent_address ? `
+                    <div class="flex items-center justify-center md:justify-start gap-2 bg-white/5 px-3.5 py-2.5 rounded-xl border border-white/10">
+                      <i data-lucide="home" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                      <span><strong class="text-white">স্থায়ী ঠিকানা:</strong> ${escapeHtml(d.permanent_address)}</span>
+                    </div>` : ''}
+                  ${d.email ? `
+                    <a href="mailto:${escapeHtml(d.email)}" class="flex items-center justify-center md:justify-start gap-2 bg-white/5 px-3.5 py-2.5 rounded-xl border border-white/10 hover:bg-white/10 transition">
+                      <i data-lucide="mail" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                      <span class="truncate">${escapeHtml(d.email)}</span>
+                    </a>` : ''}
+                  ${d.phone ? `
+                    <a href="tel:${escapeHtml(d.phone)}" class="flex items-center justify-center md:justify-start gap-2 bg-white/5 px-3.5 py-2.5 rounded-xl border border-white/10 hover:bg-white/10 transition">
+                      <i data-lucide="phone" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                      <span>${escapeHtml(d.phone)}</span>
+                    </a>` : ''}
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <main class="max-w-4xl mx-auto px-4 py-12 space-y-14">
+            <!-- Skills & Creativity -->
+            <section>
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-5 flex items-center gap-2">
+                <i data-lucide="code-2" class="w-6 h-6 text-emerald-600"></i> দক্ষতা ও সৃজনশীলতা (Skills & Creativity)
+              </h2>
+              <div class="flex flex-wrap gap-2.5">
+                ${(d.skills || []).map(skill => `
+                  <span class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 shadow-sm hover:border-emerald-400 transition">
+                    ${escapeHtml(skill)}
+                  </span>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- Education -->
+            <section id="education">
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-5 flex items-center gap-2">
+                <i data-lucide="graduation-cap" class="w-6 h-6 text-emerald-600"></i> শিক্ষাগত যোগ্যতা (Education)
+              </h2>
+              <div class="grid md:grid-cols-2 gap-4">
+                ${(d.education || []).map(edu => `
+                  <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-1.5">
+                    <div class="flex justify-between items-start gap-2">
+                      <h3 class="font-bold text-base text-slate-900">${escapeHtml(edu.degree)}</h3>
+                      ${edu.year ? `<span class="text-xs font-semibold px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full shrink-0">${escapeHtml(edu.year)}</span>` : ''}
+                    </div>
+                    <p class="text-sm text-slate-600">${escapeHtml(edu.institution)}</p>
+                    ${edu.result ? `<p class="text-xs font-medium text-slate-500">ফলাফল: ${escapeHtml(edu.result)}</p>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- Experience -->
+            <section id="experience">
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-5 flex items-center gap-2">
+                <i data-lucide="briefcase" class="w-6 h-6 text-emerald-600"></i> পেশাগত অভিজ্ঞতা (Experience)
+              </h2>
+              <div class="space-y-3.5">
+                ${(d.experiences || []).map(exp => `
+                  <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                    <div>
+                      <h3 class="font-bold text-lg text-slate-900">${escapeHtml(exp.role)}</h3>
+                      <p class="text-slate-600 text-sm">${escapeHtml(exp.org)}</p>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-700 rounded-full w-fit shrink-0">
+                      ${escapeHtml(exp.period)}
+                    </span>
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- Projects & Ventures -->
+            <section id="projects">
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-5 flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-6 h-6 text-emerald-600"></i> উল্লেখযোগ্য প্রজেক্ট ও উদ্যোগ
+              </h2>
+              <div class="grid md:grid-cols-2 gap-6">
+                ${(d.projects || []).map(proj => `
+                  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition overflow-hidden flex flex-col justify-between">
+                    <div>
+                      ${proj.media_url ? renderMediaElement(proj.media_url, proj.title, 'w-full h-48 object-cover bg-slate-900', true) : ''}
+                      <div class="p-6">
+                        <h3 class="font-bold text-lg text-slate-900 mb-2">${escapeHtml(proj.title)}</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">${escapeHtml(proj.desc)}</p>
+                      </div>
+                    </div>
+                    ${proj.link && proj.link !== '#' ? `
+                      <div class="px-6 pb-5">
+                        <a href="${escapeHtml(proj.link)}" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+                          ভিজিট করুন <i data-lucide="external-link" class="w-4 h-4"></i>
+                        </a>
+                      </div>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+          </main>
+
+          <!-- Footer -->
+          <footer class="border-t border-slate-200 bg-white py-8 px-4 text-center text-sm text-slate-500">
+            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+              <p>© ${new Date().getFullYear()} ${escapeHtml(d.full_name)}. সর্বস্বত্ব সংরক্ষিত।</p>
+              <button type="button" onclick="navigate('admin')" class="inline-flex items-center gap-1.5 text-slate-600 hover:text-emerald-600 font-medium transition">
+                <i data-lucide="lock" class="w-3.5 h-3.5"></i> অ্যাডমিন প্যানেল
+              </button>
+            </div>
+          </footer>
+        </div>
+      `;
+    }
+
+    // ==================== 2. DYNAMIC BIO LINK PAGE (/:username) ====================
+    function renderBioPage() {
+      const page = state.bioPages.find(p => p.username.toLowerCase() === currentBioUsername.toLowerCase());
+
+      if (!page) {
+        return `
+          <div class="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-white p-6 text-center fade-in">
+            <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mb-4">
+              <i data-lucide="link-2-off" class="w-7 h-7 text-emerald-400"></i>
+            </div>
+            <h1 class="text-2xl font-bold mb-2">/@${escapeHtml(currentBioUsername)} খুঁজে পাওয়া যায়নি</h1>
+            <p class="text-slate-400 text-sm max-w-md mb-6">
+              এই ইউজারনেমের বায়ো লিংক পেজটি এখনো তৈরি করা হয়নি। আপনি চাইলে অ্যাডমিন প্যানেল থেকে নতুন করে এটি তৈরি করতে পারেন।
+            </p>
+            <div class="flex flex-wrap justify-center gap-3">
+              <button type="button" onclick="navigate('portfolio')" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-medium transition">
+                পোর্টফোলিওতে ফিরুন
+              </button>
+              <button type="button" onclick="adminTab='biolink'; navigate('admin')" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 rounded-xl text-sm font-semibold transition">
+                + নতুন ইউজারনেম তৈরি করুন
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="min-h-screen py-10 px-4 flex flex-col items-center justify-between text-white fade-in"
+             style="background: linear-gradient(135deg, ${escapeHtml(page.theme_color || '#064e3b')} 0%, #020617 100%)">
+          <div class="w-full max-w-md mx-auto">
+            <!-- Top Bar -->
+            <div class="flex justify-between items-center mb-6">
+              <button type="button" onclick="navigate('portfolio')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-medium transition">
+                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> পোর্টফোলিও
+              </button>
+              <button type="button" onclick="copyBioShareLink('${escapeHtml(page.username)}')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-medium transition">
+                <i data-lucide="share-2" class="w-3.5 h-3.5"></i> লিংক কপি
+              </button>
+            </div>
+
+            <!-- Quick Switcher for Created Usernames -->
+            ${state.bioPages.length > 1 ? `
+              <div class="flex flex-wrap justify-center gap-1.5 mb-7 bg-black/30 p-1.5 rounded-2xl border border-white/10">
+                ${state.bioPages.map(bp => `
+                  <button type="button" onclick="navigate('bio', '${escapeHtml(bp.username)}')"
+                    class="px-3 py-1 rounded-xl text-xs font-medium transition ${bp.username === page.username ? 'bg-white text-slate-900 shadow' : 'text-slate-300 hover:text-white'}">
+                    /${escapeHtml(bp.username)}
+                  </button>
+                `).join('')}
+              </div>
+            ` : ''}
+
+            <!-- Bio Profile Info -->
+            <div class="text-center mb-8">
+              <div class="w-24 h-24 rounded-full mx-auto overflow-hidden border-2 border-white/40 shadow-2xl mb-4">
+                ${renderMediaElement(page.avatar_url, page.display_name, 'w-full h-full object-cover', false)}
+              </div>
+              <h1 class="text-2xl font-bold tracking-tight">${escapeHtml(page.display_name)}</h1>
+              <p class="text-xs text-emerald-300 font-mono mt-1">ovi.pages.dev/${escapeHtml(page.username)}</p>
+              ${page.bio_text ? `<p class="text-sm text-slate-200 mt-3 leading-relaxed">${escapeHtml(page.bio_text)}</p>` : ''}
+            </div>
+
+            <!-- Social Links with Brand Colors & SVG Logos -->
+            <div class="space-y-3.5">
+              ${(page.links || []).map(link => {
+                const meta = getPlatformMeta(link.platform, link.url);
+                const isInternalPortfolio = link.url === '#portfolio';
+                if (isInternalPortfolio) {
+                  return `
+                    <button type="button" onclick="navigate('portfolio')" class="group flex items-center justify-between w-full p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 ${meta.hoverBorder} backdrop-blur-md transition-all duration-200 hover:scale-[1.02] text-left">
+                      <div class="flex items-center gap-3.5 min-w-0">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 ${meta.badgeBg}">
+                          ${meta.svg}
+                        </div>
+                        <div class="min-w-0">
+                          <span class="font-semibold text-sm sm:text-base block truncate">${escapeHtml(link.title)}</span>
+                          <span class="text-[11px] text-slate-300/80">${meta.name}</span>
+                        </div>
+                      </div>
+                      <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-300 group-hover:text-white transition shrink-0"></i>
+                    </button>
+                  `;
+                }
+                return `
+                  <a href="${escapeHtml(link.url)}" target="_blank" rel="noreferrer" class="group flex items-center justify-between w-full p-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 ${meta.hoverBorder} backdrop-blur-md transition-all duration-200 hover:scale-[1.02]">
+                    <div class="flex items-center gap-3.5 min-w-0">
+                      <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-md shrink-0 ${meta.badgeBg}">
+                        ${meta.svg}
+                      </div>
+                      <div class="min-w-0">
+                        <span class="font-semibold text-sm sm:text-base block truncate">${escapeHtml(link.title)}</span>
+                        <span class="text-[11px] text-slate-300/80">${meta.name}</span>
+                      </div>
+                    </div>
+                    <i data-lucide="external-link" class="w-4 h-4 text-slate-300 group-hover:text-white transition shrink-0"></i>
+                  </a>
+                `;
+              }).join('')}
+
+              ${(page.links || []).length === 0 ? `
+                <div class="text-center py-8 bg-white/5 rounded-2xl border border-white/10">
+                  <p class="text-sm text-slate-300 mb-3">এই ইউজারনেমে এখনো কোনো লিংক যোগ করা হয়নি।</p>
+                  <button type="button" onclick="adminTab='biolink'; selectedAdminBioId='${page.id}'; navigate('admin')" class="px-4 py-2 bg-emerald-600 rounded-xl text-xs font-semibold">
+                    + লিংক যোগ করুন
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <footer class="mt-12 text-center text-xs text-slate-400 space-y-1.5">
+            <button type="button" onclick="adminTab='biolink'; selectedAdminBioId='${page.id}'; navigate('admin')" class="underline hover:text-white transition">
+              এই বায়ো পেজটি এডিট করুন
+            </button>
+            <p>Powered by ${escapeHtml(state.portfolio.full_name)}</p>
+          </footer>
+        </div>
+      `;
+    }
+
+    // ==================== 3. INTERACTIVE ADMIN PANEL (/admin) ====================
+    function renderAdmin() {
+      const p = state.portfolio;
+      const currentBio = state.bioPages.find(b => b.id === selectedAdminBioId) || state.bioPages[0];
+      if (currentBio && !selectedAdminBioId) selectedAdminBioId = currentBio.id;
+
+      return `
+        <div class="min-h-screen bg-slate-100 pb-20 fade-in">
+          <!-- Admin Header -->
+          <header class="bg-slate-900 text-white px-4 py-4 shadow">
+            <div class="max-w-5xl mx-auto flex justify-between items-center gap-2">
+              <div class="flex items-center gap-3 min-w-0">
+                <button type="button" onclick="navigate('portfolio')" class="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition shrink-0" title="হোমপেজে যান">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div class="min-w-0">
+                  <h1 class="font-bold text-base sm:text-lg truncate">অ্যাডমিন কন্ট্রোল প্যানেল</h1>
+                  <p class="text-[11px] text-emerald-400 truncate">Cloudinary মিডিয়া ফ্লো + লাইভ প্রিভিউ আপডেট</p>
+                </div>
+              </div>
+              <button type="button" onclick="resetDemoData()" class="text-xs bg-white/10 hover:bg-white/20 text-slate-200 px-3 py-1.5 rounded-lg transition shrink-0">
+                ডিফল্ট রিসেট
+              </button>
+            </div>
+          </header>
+
+          <div class="max-w-5xl mx-auto px-4 mt-6">
+            <!-- Admin Tabs -->
+            <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3">
+              <button type="button" onclick="adminTab='portfolio'; render()" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition ${adminTab === 'portfolio' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-50'}">
+                <i data-lucide="user-cog" class="w-4 h-4"></i> পোর্টফোলিও এডিটর
+              </button>
+              <button type="button" onclick="adminTab='biolink'; render()" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition ${adminTab === 'biolink' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-50'}">
+                <i data-lucide="link-2" class="w-4 h-4"></i> বায়ো লিংক ম্যানেজার (/username)
+              </button>
+            </div>
+
+            ${adminTab === 'portfolio' ? `
+              <!-- TAB 1: PORTFOLIO EDITOR -->
+              <form onsubmit="handleSavePortfolio(event)" class="mt-6 bg-white p-5 sm:p-7 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <!-- Profile Avatar / Video Upload -->
+                <div class="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-emerald-500 shadow shrink-0">
+                    ${renderMediaElement(p.avatar_url, p.full_name, 'w-full h-full object-cover', false)}
+                  </div>
+                  <div class="flex-1 w-full space-y-2">
+                    <label class="block text-sm font-bold text-slate-800">প্রোফাইল ছবি বা ভিডিও (Cloudinary Upload / URL)</label>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                      <label class="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white text-xs font-semibold rounded-xl hover:bg-slate-800 transition shrink-0">
+                        <i data-lucide="upload" class="w-4 h-4"></i> ফাইল সিলেক্ট করুন
+                        <input type="file" accept="image/*,video/*" onchange="handleFileSelect(event, 'portfolio')" class="hidden" />
+                      </label>
+                      <input type="text" id="p-avatar" value="${escapeHtml(p.avatar_url || '')}" placeholder="Cloudinary URL বা ফাইল আপলোড করুন" class="flex-1 px-3 py-2 border border-slate-300 rounded-xl text-xs bg-white" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Name & Tagline -->
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">আপনার নাম</label>
+                    <input type="text" id="p-name" required value="${escapeHtml(p.full_name)}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">পদবি / ট্যাগলাইন</label>
+                    <input type="text" id="p-tagline" value="${escapeHtml(p.tagline || '')}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm" />
+                  </div>
+                </div>
+
+                <!-- Bio -->
+                <div>
+                  <label class="block text-sm font-semibold text-slate-700 mb-1">বিস্তারিত বর্ণনা (Bio)</label>
+                  <textarea id="p-bio" rows="3" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm">${escapeHtml(p.bio || '')}</textarea>
+                </div>
+
+                <!-- Present Address, Permanent Address, Email, Phone -->
+                <div class="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">বর্তমান ঠিকানা (Present Address)</label>
+                    <input type="text" id="p-present" value="${escapeHtml(p.present_address || '')}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">স্থায়ী ঠিকানা (Permanent Address)</label>
+                    <input type="text" id="p-permanent" value="${escapeHtml(p.permanent_address || '')}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">ইমেইল</label>
+                    <input type="email" id="p-email" value="${escapeHtml(p.email || '')}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm" />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">ফোন নম্বর</label>
+                    <input type="text" id="p-phone" value="${escapeHtml(p.phone || '')}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm" />
+                  </div>
+                </div>
+
+                <!-- Skills -->
+                <div>
+                  <label class="block text-sm font-semibold text-slate-700 mb-1">দক্ষতা ও সৃজনশীলতা (কমা দিয়ে আলাদা করুন)</label>
+                  <input type="text" id="p-skills" value="${escapeHtml((p.skills || []).join(', '))}" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm" />
+                </div>
+
+                <!-- Education Items -->
+                <div class="border-t pt-5">
+                  <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-slate-900">শিক্ষাগত যোগ্যতা (Education)</h3>
+                    <button type="button" onclick="syncPortfolioInputs(); state.portfolio.education.push({ degree: '', institution: '', year: '', result: '' }); render()" class="text-xs flex items-center gap-1 bg-slate-900 text-white px-3 py-1.5 rounded-xl hover:bg-slate-800">
+                      <i data-lucide="plus" class="w-3.5 h-3.5"></i> নতুন ডিগ্রি
+                    </button>
+                  </div>
+                  <div class="space-y-2.5">
+                    ${(p.education || []).map((edu, i) => `
+                      <div class="grid md:grid-cols-4 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <input placeholder="ডিগ্রির নাম" value="${escapeHtml(edu.degree)}" onchange="state.portfolio.education[${i}].degree=this.value" class="p-2 border rounded-lg text-xs bg-white" />
+                        <input placeholder="প্রতিষ্ঠানের নাম" value="${escapeHtml(edu.institution)}" onchange="state.portfolio.education[${i}].institution=this.value" class="p-2 border rounded-lg text-xs bg-white" />
+                        <input placeholder="সাল / সেশন" value="${escapeHtml(edu.year)}" onchange="state.portfolio.education[${i}].year=this.value" class="p-2 border rounded-lg text-xs bg-white" />
+                        <div class="flex gap-1.5">
+                          <input placeholder="ফলাফল (GPA/CGPA)" value="${escapeHtml(edu.result)}" onchange="state.portfolio.education[${i}].result=this.value" class="p-2 border rounded-lg text-xs bg-white w-full" />
+                          <button type="button" onclick="syncPortfolioInputs(); state.portfolio.education.splice(${i},1); render()" class="text-red-500 hover:bg-red-50 p-2 rounded-lg" title="ডিলিট"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Experience Items -->
+                <div class="border-t pt-5">
+                  <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-slate-900">পেশাগত অভিজ্ঞতা (Experience)</h3>
+                    <button type="button" onclick="syncPortfolioInputs(); state.portfolio.experiences.push({ role: '', org: '', period: '' }); render()" class="text-xs flex items-center gap-1 bg-slate-900 text-white px-3 py-1.5 rounded-xl hover:bg-slate-800">
+                      <i data-lucide="plus" class="w-3.5 h-3.5"></i> নতুন অভিজ্ঞতা
+                    </button>
+                  </div>
+                  <div class="space-y-2.5">
+                    ${(p.experiences || []).map((exp, i) => `
+                      <div class="grid md:grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <input placeholder="পদবি" value="${escapeHtml(exp.role)}" onchange="state.portfolio.experiences[${i}].role=this.value" class="p-2 border rounded-lg text-xs bg-white" />
+                        <input placeholder="প্রতিষ্ঠান" value="${escapeHtml(exp.org)}" onchange="state.portfolio.experiences[${i}].org=this.value" class="p-2 border rounded-lg text-xs bg-white" />
+                        <div class="flex gap-1.5">
+                          <input placeholder="সময়কাল" value="${escapeHtml(exp.period)}" onchange="state.portfolio.experiences[${i}].period=this.value" class="p-2 border rounded-lg text-xs bg-white w-full" />
+                          <button type="button" onclick="syncPortfolioInputs(); state.portfolio.experiences.splice(${i},1); render()" class="text-red-500 hover:bg-red-50 p-2 rounded-lg" title="ডিলিট"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Projects & Ventures Items -->
+                <div class="border-t pt-5">
+                  <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-slate-900">প্রজেক্ট ও উদ্যোগ (ছবি বা ভিডিওসহ)</h3>
+                    <button type="button" onclick="syncPortfolioInputs(); state.portfolio.projects.push({ title: '', desc: '', link: '', media_url: '' }); render()" class="text-xs flex items-center gap-1 bg-slate-900 text-white px-3 py-1.5 rounded-xl hover:bg-slate-800">
+                      <i data-lucide="plus" class="w-3.5 h-3.5"></i> নতুন প্রজেক্ট
+                    </button>
+                  </div>
+                  <div class="space-y-3">
+                    ${(p.projects || []).map((proj, i) => `
+                      <div class="space-y-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <div class="grid md:grid-cols-3 gap-2">
+                          <input placeholder="প্রজেক্টের নাম" value="${escapeHtml(proj.title)}" onchange="state.portfolio.projects[${i}].title=this.value" class="p-2 border rounded-lg text-xs bg-white" />
+                          <input placeholder="সংক্ষিপ্ত বিবরণ" value="${escapeHtml(proj.desc)}" onchange="state.portfolio.projects[${i}].desc=this.value" class="p-2 border rounded-lg text-xs bg-white" />
+                          <div class="flex gap-1.5">
+                            <input placeholder="ওয়েবসাইট/লিংক (https://...)" value="${escapeHtml(proj.link)}" onchange="state.portfolio.projects[${i}].link=this.value" class="p-2 border rounded-lg text-xs bg-white w-full" />
+                            <button type="button" onclick="syncPortfolioInputs(); state.portfolio.projects.splice(${i},1); render()" class="text-red-500 hover:bg-red-50 p-2 rounded-lg" title="ডিলিট"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                          </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2 items-center">
+                          <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 text-white text-xs font-medium rounded-lg shrink-0">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i> ছবি/ভিডিও দিন
+                            <input type="file" accept="image/*,video/*" onchange="handleFileSelect(event, 'project', ${i})" class="hidden" />
+                          </label>
+                          <input placeholder="ছবি বা ভিডিও URL" value="${escapeHtml(proj.media_url || '')}" onchange="state.portfolio.projects[${i}].media_url=this.value" class="p-1.5 border rounded-lg text-xs w-full bg-white" />
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <div class="pt-2 flex flex-wrap gap-3">
+                  <button type="submit" class="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 shadow-md transition">
+                    <i data-lucide="save" class="w-4 h-4"></i> সব তথ্য সেভ করুন
+                  </button>
+                  <button type="button" onclick="navigate('portfolio')" class="px-5 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition">
+                    হোমপেজ প্রিভিউ দেখুন
+                  </button>
+                </div>
+              </form>
+            ` : `
+              <!-- TAB 2: BIO LINK MANAGER (/username) -->
+              <div class="mt-6 grid md:grid-cols-3 gap-6">
+                <!-- Left: Create New Username -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit space-y-4">
+                  <h2 class="font-bold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i> নতুন বায়ো ইউজারনেম
+                  </h2>
+                  <form onsubmit="handleCreateBioPage(event)" class="space-y-3">
+                    <div>
+                      <label class="text-xs font-semibold text-slate-600">ইউজারনেম (যেমন: dorpon)</label>
+                      <div class="flex items-center border border-slate-300 rounded-xl overflow-hidden mt-1">
+                        <span class="bg-slate-100 text-slate-500 text-xs px-2.5 py-2.5 border-r">/</span>
+                        <input required id="new-bio-username" placeholder="username" class="w-full p-2 text-sm outline-none" />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-600">ডিসপ্লে নাম</label>
+                      <input required id="new-bio-name" placeholder="যেমন: Dorpon Media" class="w-full p-2.5 border border-slate-300 rounded-xl text-sm mt-1" />
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-600">ছবি/ভিডিও বা URL</label>
+                      <div class="flex gap-1.5 mt-1">
+                        <label class="cursor-pointer px-3 py-2 bg-slate-800 text-white text-xs font-medium rounded-xl shrink-0">
+                          ফাইল দিন
+                          <input type="file" accept="image/*,video/*" onchange="handleFileSelect(event, 'newbio')" class="hidden" />
+                        </label>
+                        <input id="new-bio-avatar" placeholder="অথবা ইমেজ/ভিডিও URL" class="w-full p-2 border border-slate-300 rounded-xl text-xs" />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-600">বায়ো টেক্সট</label>
+                      <textarea id="new-bio-text" rows="2" placeholder="সংক্ষিপ্ত পরিচিতি..." class="w-full p-2.5 border border-slate-300 rounded-xl text-sm mt-1"></textarea>
+                    </div>
+                    <div>
+                      <label class="text-xs font-semibold text-slate-600">থিম কালার</label>
+                      <input type="color" id="new-bio-color" value="#064e3b" class="w-full h-10 p-1 border border-slate-300 rounded-xl mt-1 cursor-pointer" />
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 transition">
+                      + নতুন লিংক পেজ তৈরি করুন
+                    </button>
+                  </form>
+                </div>
+
+                <!-- Right: Manage Selected Username & Social Links -->
+                <div class="md:col-span-2 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-5">
+                  <div class="flex flex-wrap gap-2 items-center justify-between border-b border-slate-200 pb-4">
+                    <div class="flex flex-wrap gap-2">
+                      ${state.bioPages.map(bp => `
+                        <button type="button" onclick="selectedAdminBioId='${bp.id}'; editingLinkId=null; render()"
+                          class="px-3.5 py-1.5 rounded-full text-xs font-semibold border transition ${currentBio && bp.id === currentBio.id ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}">
+                          /${escapeHtml(bp.username)}
+                        </button>
+                      `).join('')}
+                    </div>
+
+                    ${currentBio ? `
+                      <div class="flex items-center gap-2">
+                        <button type="button" onclick="navigate('bio', '${escapeHtml(currentBio.username)}')" class="text-xs flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl font-semibold hover:bg-emerald-100">
+                          প্রিভিউ দেখুন <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        </button>
+                        ${state.bioPages.length > 1 ? `
+                          <button type="button" onclick="confirmDeleteBioPage('${currentBio.id}')" class="text-red-500 p-1.5 hover:bg-red-50 rounded-xl" title="ইউজারনেম ডিলিট করুন">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                          </button>
+                        ` : ''}
+                      </div>
+                    ` : ''}
+                  </div>
+
+                  ${currentBio ? `
+                    <!-- Bio Page Profile Quick Editor -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                      <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-700">/${escapeHtml(currentBio.username)} পেজ সেটিংস</span>
+                        <span class="text-[11px] font-mono text-slate-500">ovi.pages.dev/${escapeHtml(currentBio.username)}</span>
+                      </div>
+                      <div class="grid sm:grid-cols-2 gap-2.5">
+                        <input value="${escapeHtml(currentBio.display_name)}" onchange="updateBioMeta('${currentBio.id}', 'display_name', this.value)" placeholder="ডিসপ্লে নাম" class="p-2 border rounded-lg text-xs bg-white" />
+                        <div class="flex items-center gap-2">
+                          <span class="text-xs text-slate-600">থিম রঙ:</span>
+                          <input type="color" value="${escapeHtml(currentBio.theme_color || '#064e3b')}" onchange="updateBioMeta('${currentBio.id}', 'theme_color', this.value); render()" class="h-8 w-14 border rounded cursor-pointer" />
+                        </div>
+                      </div>
+                      <input value="${escapeHtml(currentBio.bio_text || '')}" onchange="updateBioMeta('${currentBio.id}', 'bio_text', this.value)" placeholder="বায়ো টেক্সট" class="w-full p-2 border rounded-lg text-xs bg-white" />
+                    </div>
+
+                    <!-- Add or Edit Social Link Form -->
+                    <form onsubmit="handleSaveSocialLink(event, '${currentBio.id}')" class="grid sm:grid-cols-4 gap-2 bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200">
+                      <select id="link-platform" class="p-2.5 border border-slate-300 rounded-xl text-xs bg-white font-medium">
+                        <option value="auto">Auto Detect (লিংক থেকে)</option>
+                        ${SOCIAL_PLATFORMS.map(sp => `<option value="${sp.id}">${sp.name}</option>`).join('')}
+                      </select>
+                      <input required id="new-link-title" placeholder="বাটনের নাম (যেমন: YouTube)" class="p-2.5 border border-slate-300 rounded-xl text-xs bg-white" />
+                      <input required id="new-link-url" placeholder="লিংক (https://...)" class="p-2.5 border border-slate-300 rounded-xl text-xs bg-white" />
+                      <div class="flex gap-1.5">
+                        <button type="submit" class="flex-1 bg-emerald-600 text-white text-xs font-semibold rounded-xl py-2.5 hover:bg-emerald-700 transition">
+                          ${editingLinkId ? 'আপডেট' : '+ যোগ করুন'}
+                        </button>
+                        ${editingLinkId ? `
+                          <button type="button" onclick="editingLinkId=null; render()" class="px-2.5 bg-slate-200 text-slate-700 text-xs rounded-xl">বাতিল</button>
+                        ` : ''}
+                      </div>
+                    </form>
+
+                    <!-- Links List with Platform Badges, Edit & Delete -->
+                    <div class="space-y-2.5">
+                      ${(currentBio.links || []).map((link, idx) => {
+                        const meta = getPlatformMeta(link.platform, link.url);
+                        return `
+                          <div class="flex items-center justify-between p-3 border border-slate-200 rounded-xl hover:bg-slate-50 gap-2">
+                            <div class="flex items-center gap-3 min-w-0">
+                              <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${meta.badgeBg}">
+                                ${meta.svg}
+                              </div>
+                              <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                  <p class="font-semibold text-sm text-slate-900 truncate">${escapeHtml(link.title)}</p>
+                                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium shrink-0">${meta.name}</span>
+                                </div>
+                                <p class="text-xs text-slate-500 truncate">${escapeHtml(link.url)}</p>
+                              </div>
+                            </div>
+                            <div class="flex items-center gap-1 shrink-0">
+                              ${idx > 0 ? `<button type="button" onclick="moveSocialLink('${currentBio.id}', ${idx}, -1)" class="p-1.5 text-slate-500 hover:bg-slate-200 rounded-lg" title="উপরে নিন"><i data-lucide="arrow-up" class="w-3.5 h-3.5"></i></button>` : ''}
+                              ${idx < currentBio.links.length - 1 ? `<button type="button" onclick="moveSocialLink('${currentBio.id}', ${idx}, 1)" class="p-1.5 text-slate-500 hover:bg-slate-200 rounded-lg" title="নিচে নিন"><i data-lucide="arrow-down" class="w-3.5 h-3.5"></i></button>` : ''}
+                              <button type="button" onclick="startEditSocialLink('${currentBio.id}', '${link.id}')" class="px-2.5 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg">এডিট</button>
+                              <button type="button" onclick="deleteSocialLink('${currentBio.id}', '${link.id}')" class="text-red-500 p-1.5 hover:bg-red-50 rounded-lg" title="ডিলিট"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    // ==================== ADMIN INTERACTION FUNCTIONS ====================
+    function syncPortfolioInputs() {
+      const nameEl = document.getElementById('p-name');
+      if (!nameEl) return;
+      state.portfolio.full_name = nameEl.value.trim();
+      state.portfolio.tagline = document.getElementById('p-tagline')?.value.trim() || '';
+      state.portfolio.bio = document.getElementById('p-bio')?.value.trim() || '';
+      state.portfolio.avatar_url = document.getElementById('p-avatar')?.value.trim() || '';
+      state.portfolio.present_address = document.getElementById('p-present')?.value.trim() || '';
+      state.portfolio.permanent_address = document.getElementById('p-permanent')?.value.trim() || '';
+      state.portfolio.email = document.getElementById('p-email')?.value.trim() || '';
+      state.portfolio.phone = document.getElementById('p-phone')?.value.trim() || '';
+      state.portfolio.skills = (document.getElementById('p-skills')?.value || '').split(',').map(s => s.trim()).filter(Boolean);
+    }
+
+    function handleFileSelect(event, target, index = null) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const resultUrl = e.target.result;
+        if (target === 'portfolio') {
+          state.portfolio.avatar_url = resultUrl;
+          const inputEl = document.getElementById('p-avatar');
+          if (inputEl) inputEl.value = resultUrl;
+          saveState();
+          showToast('নতুন মিডিয়া ফাইল যুক্ত হয়েছে!');
+          render();
+        } else if (target === 'newbio') {
+          const bioInput = document.getElementById('new-bio-avatar');
+          if (bioInput) bioInput.value = resultUrl;
+          showToast('বায়ো পেজের মিডিয়া সিলেক্ট হয়েছে!');
+        } else if (target === 'project' && index !== null) {
+          syncPortfolioInputs();
+          state.portfolio.projects[index].media_url = resultUrl;
+          saveState();
+          showToast('প্রজেক্ট মিডিয়া যুক্ত হয়েছে!');
+          render();
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleSavePortfolio(e) {
+      e.preventDefault();
+      syncPortfolioInputs();
+      saveState();
+      showToast('পোর্টফোলিওর সব তথ্য সফলভাবে সেভ হয়েছে!');
+      render();
+    }
+
+    function handleCreateBioPage(e) {
+      e.preventDefault();
+      const rawUsername = document.getElementById('new-bio-username').value;
+      const cleanUsername = rawUsername.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!cleanUsername) {
+        showToast('সঠিক ইংরেজি ইউজারনেম দিন!');
+        return;
+      }
+      if (state.bioPages.some(b => b.username === cleanUsername)) {
+        showToast('এই ইউজারনেমটি ইতিমধ্যে ব্যবহৃত হয়েছে!');
+        return;
+      }
+
+      const created = {
+        id: 'bio-' + Date.now(),
+        username: cleanUsername,
+        display_name: document.getElementById('new-bio-name').value.trim(),
+        avatar_url: document.getElementById('new-bio-avatar').value.trim(),
+        bio_text: document.getElementById('new-bio-text').value.trim(),
+        theme_color: document.getElementById('new-bio-color').value,
+        links: []
+      };
+
+      state.bioPages.push(created);
+      selectedAdminBioId = created.id;
+      currentBioUsername = cleanUsername;
+      editingLinkId = null;
+      document.getElementById('nav-bio-label').textContent = cleanUsername;
+      saveState();
+      showToast(`নতুন লিংক /${cleanUsername} তৈরি হয়েছে!`);
+      render();
+    }
+
+    function confirmDeleteBioPage(pageId) {
+      openConfirm('আপনি কি নিশ্চিতভাবে এই ইউজারনেম পেজটি ডিলিট করতে চান?', () => {
+        state.bioPages = state.bioPages.filter(b => b.id !== pageId);
+        selectedAdminBioId = state.bioPages[0]?.id || '';
+        currentBioUsername = state.bioPages[0]?.username || 'ovi';
+        editingLinkId = null;
+        document.getElementById('nav-bio-label').textContent = currentBioUsername;
+        saveState();
+        showToast('ইউজারনেম পেজ ডিলিট করা হয়েছে।');
+        render();
+      });
+    }
+
+    function updateBioMeta(pageId, field, value) {
+      const page = state.bioPages.find(b => b.id === pageId);
+      if (page) {
+        page[field] = value;
+        saveState();
+        showToast('পরিবর্তন সেভ হয়েছে!');
+      }
+    }
+
+    function startEditSocialLink(pageId, linkId) {
+      const page = state.bioPages.find(b => b.id === pageId);
+      const link = page?.links.find(l => l.id === linkId);
+      if (!link) return;
+      editingLinkId = linkId;
+      render();
+      setTimeout(() => {
+        const platEl = document.getElementById('link-platform');
+        const titleEl = document.getElementById('new-link-title');
+        const urlEl = document.getElementById('new-link-url');
+        if (platEl) platEl.value = link.platform || 'auto';
+        if (titleEl) titleEl.value = link.title || '';
+        if (urlEl) urlEl.value = link.url || '';
+      }, 10);
+    }
+
+    function handleSaveSocialLink(e, pageId) {
+      e.preventDefault();
+      const page = state.bioPages.find(b => b.id === pageId);
+      if (!page) return;
+      const platform = document.getElementById('link-platform').value;
+      const title = document.getElementById('new-link-title').value.trim();
+      let url = document.getElementById('new-link-url').value.trim();
+      if (!url.startsWith('http') && !url.startsWith('tel:') && !url.startsWith('mailto:') && url !== '#portfolio') {
+        url = 'https://' + url;
+      }
+
+      if (editingLinkId) {
+        const targetLink = page.links.find(l => l.id === editingLinkId);
+        if (targetLink) {
+          targetLink.platform = platform;
+          targetLink.title = title;
+          targetLink.url = url;
+        }
+        editingLinkId = null;
+        showToast('লিংক আপডেট হয়েছে!');
+      } else {
+        page.links.push({
+          id: 'link-' + Date.now(),
+          platform,
+          title,
+          url
+        });
+        showToast('নতুন সোশ্যাল লিংক যোগ হয়েছে!');
+      }
+
+      saveState();
+      render();
+    }
+
+    function deleteSocialLink(pageId, linkId) {
+      const page = state.bioPages.find(b => b.id === pageId);
+      if (!page) return;
+      page.links = page.links.filter(l => l.id !== linkId);
+      if (editingLinkId === linkId) editingLinkId = null;
+      saveState();
+      showToast('লিংক মুছে ফেলা হয়েছে।');
+      render();
+    }
+
+    function moveSocialLink(pageId, idx, delta) {
+      const page = state.bioPages.find(b => b.id === pageId);
+      if (!page) return;
+      const targetIdx = idx + delta;
+      if (targetIdx < 0 || targetIdx >= page.links.length) return;
+      const temp = page.links[idx];
+      page.links[idx] = page.links[targetIdx];
+      page.links[targetIdx] = temp;
+      saveState();
+      render();
+    }
+
+    function copyBioShareLink(username) {
+      const shareUrl = `${window.location.origin}${window.location.pathname}#/${username}`;
+      const tempInput = document.createElement('input');
+      tempInput.value = shareUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast(`কপি হয়েছে: /${username}`);
+    }
+
+    function resetDemoData() {
+      openConfirm('সব কাস্টম পরিবর্তন মুছে ডিফল্ট ডাটায় ফিরে যেতে চান?', () => {
+        localStorage.removeItem('ovi_portfolio_live_preview_v2');
+        state = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        selectedAdminBioId = state.bioPages[0].id;
+        currentBioUsername = state.bioPages[0].username;
+        editingLinkId = null;
+        document.getElementById('nav-bio-label').textContent = currentBioUsername;
+        showToast('ডিফল্ট ডাটা রিসেট হয়েছে!');
+        render();
+      });
+    }
+
+    function render() {
+      const app = document.getElementById('app');
+      if (currentView === 'portfolio') {
+        app.innerHTML = renderPortfolio();
+      } else if (currentView === 'bio') {
+        app.innerHTML = renderBioPage();
+      } else {
+        app.innerHTML = renderAdmin();
+      }
+      lucide.createIcons();
+    }
+
+    window.addEventListener('hashchange', () => {
+      parseHashRoute();
+      render();
+    });
+
+    window.onload = function() {
+      parseHashRoute();
+      render();
+    };
+  </script>
+</body>
+</html>
